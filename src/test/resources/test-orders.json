@@ -1,0 +1,319 @@
+[
+  {
+    "scenario": "单品订单 + 折扣",
+    "order": {
+      "orderId": "ORDER001",
+      "items": [
+        {
+          "skuId": "SKU001",
+          "skuName": "无线蓝牙耳机",
+          "price": 299.00,
+          "quantity": 1,
+          "category": "electronics"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C001",
+        "name": "新人8折券",
+        "type": "DISCOUNT",
+        "source": "GENERAL",
+        "threshold": 0,
+        "value": 0.8
+      }
+    ],
+    "expectedFinalPrice": 239.20
+  },
+  {
+    "scenario": "多品订单 + 满减",
+    "order": {
+      "orderId": "ORDER002",
+      "items": [
+        {
+          "skuId": "SKU001",
+          "skuName": "无线蓝牙耳机",
+          "price": 299.00,
+          "quantity": 1,
+          "category": "electronics"
+        },
+        {
+          "skuId": "SKU002",
+          "skuName": "手机壳",
+          "price": 39.90,
+          "quantity": 2,
+          "category": "accessories"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C002",
+        "name": "满300减40",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "CAMPAIGN",
+        "threshold": 300,
+        "value": 40
+      }
+    ],
+    "expectedFinalPrice": 337.80
+  },
+  {
+    "scenario": "三类券叠加（折扣+满减+立减）",
+    "order": {
+      "orderId": "ORDER003",
+      "items": [
+        {
+          "skuId": "SKU003",
+          "skuName": "机械键盘",
+          "price": 500.00,
+          "quantity": 1,
+          "category": "electronics"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C003",
+        "name": "会员9折券",
+        "type": "DISCOUNT",
+        "source": "MEMBER",
+        "threshold": 0,
+        "value": 0.9
+      },
+      {
+        "couponId": "C004",
+        "name": "满400减50",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "CAMPAIGN",
+        "threshold": 400,
+        "value": 50
+      },
+      {
+        "couponId": "C005",
+        "name": "立减10元",
+        "type": "FIXED_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 0,
+        "value": 10
+      }
+    ],
+    "expectedFinalPrice": 390.00,
+    "note": "正确计算顺序：先折500*0.9=450，再满减450-50=400，再立减400-10=390"
+  },
+  {
+    "scenario": "同类型互斥（两张满减取最优）",
+    "order": {
+      "orderId": "ORDER004",
+      "items": [
+        {
+          "skuId": "SKU004",
+          "skuName": "显示器",
+          "price": 800.00,
+          "quantity": 1,
+          "category": "electronics"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C006",
+        "name": "满500减60",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 500,
+        "value": 60
+      },
+      {
+        "couponId": "C007",
+        "name": "满500减100",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 500,
+        "value": 100
+      }
+    ],
+    "expectedFinalPrice": 700.00,
+    "note": "同来源同类型取最优：满500减100"
+  },
+  {
+    "scenario": "浮点精度验证",
+    "order": {
+      "orderId": "ORDER005",
+      "items": [
+        {
+          "skuId": "SKU005",
+          "skuName": "数据线",
+          "price": 19.90,
+          "quantity": 3,
+          "category": "accessories"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C008",
+        "name": "立减5元",
+        "type": "FIXED_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 0,
+        "value": 5
+      }
+    ],
+    "expectedFinalPrice": 54.70,
+    "note": "19.90 * 3 = 59.70（注意浮点精度），59.70 - 5 = 54.70"
+  },
+  {
+    "scenario": "品类券 — 仅电子产品满减",
+    "order": {
+      "orderId": "ORDER006",
+      "items": [
+        {
+          "skuId": "SKU_E1",
+          "skuName": "蓝牙耳机",
+          "price": 300.00,
+          "quantity": 1,
+          "category": "electronics"
+        },
+        {
+          "skuId": "SKU_A1",
+          "skuName": "手机壳",
+          "price": 200.00,
+          "quantity": 1,
+          "category": "accessories"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C009",
+        "name": "电子产品满200减40",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 200,
+        "value": 40,
+        "applicableCategories": ["electronics"]
+      }
+    ],
+    "expectedFinalPrice": 460.00,
+    "note": "electronics=300 >= 200 满足门槛，总价500-40=460"
+  },
+  {
+    "scenario": "冲突组 — 跨类型互斥",
+    "order": {
+      "orderId": "ORDER007",
+      "items": [
+        {
+          "skuId": "SKU007",
+          "skuName": "平板电脑",
+          "price": 500.00,
+          "quantity": 1,
+          "category": "electronics"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C060",
+        "name": "春促8折",
+        "type": "DISCOUNT",
+        "source": "CAMPAIGN",
+        "threshold": 0,
+        "value": 0.8,
+        "conflictGroup": "spring_sale"
+      },
+      {
+        "couponId": "C061",
+        "name": "春促满减120",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "CAMPAIGN",
+        "threshold": 200,
+        "value": 120,
+        "conflictGroup": "spring_sale"
+      }
+    ],
+    "expectedFinalPrice": 380.00,
+    "note": "同冲突组选最优：8折优惠100 vs 满减120，选满减120。500-120=380"
+  },
+  {
+    "scenario": "分摊 — 两商品按比例分摊满减",
+    "order": {
+      "orderId": "ORDER008",
+      "items": [
+        {
+          "skuId": "SKU_A",
+          "skuName": "商品A",
+          "price": 300.00,
+          "quantity": 1,
+          "category": "electronics"
+        },
+        {
+          "skuId": "SKU_B",
+          "skuName": "商品B",
+          "price": 200.00,
+          "quantity": 1,
+          "category": "accessories"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C070",
+        "name": "满200减50",
+        "type": "THRESHOLD_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 200,
+        "value": 50
+      }
+    ],
+    "expectedFinalPrice": 450.00,
+    "expectedApportionment": {
+      "SKU_A": 30.00,
+      "SKU_B": 20.00
+    },
+    "note": "A:300/500*50=30, B:200/500*50=20, 合计50"
+  },
+  {
+    "scenario": "分摊 — 尾差处理",
+    "order": {
+      "orderId": "ORDER009",
+      "items": [
+        {
+          "skuId": "SKU_X",
+          "skuName": "商品X",
+          "price": 100.00,
+          "quantity": 1,
+          "category": "general"
+        },
+        {
+          "skuId": "SKU_Y",
+          "skuName": "商品Y",
+          "price": 100.00,
+          "quantity": 1,
+          "category": "general"
+        },
+        {
+          "skuId": "SKU_Z",
+          "skuName": "商品Z",
+          "price": 100.00,
+          "quantity": 1,
+          "category": "general"
+        }
+      ]
+    },
+    "coupons": [
+      {
+        "couponId": "C071",
+        "name": "立减10",
+        "type": "FIXED_REDUCTION",
+        "source": "GENERAL",
+        "threshold": 0,
+        "value": 10
+      }
+    ],
+    "expectedFinalPrice": 290.00,
+    "expectedApportionment": {
+      "note": "每行 3.33，尾差0.01归入某一行使总和=10.00"
+    }
+  }
+]
