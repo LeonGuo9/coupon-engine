@@ -3,7 +3,7 @@
 
 ## 获取工程
 
-  git clone git@github.com:LeonGuo9/coupon-engine.git
+  git clone https://github.com/LeonGuo9/coupon-engine.git
   cd coupon-engine
 
 
